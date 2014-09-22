@@ -1,0 +1,57 @@
+<?xml version="1.0" ?>
+<project>
+    <property name="src" location="src" />
+    <property name="dist" location="out\artifacts\browser_app_jar"/>
+    <property name="build" location="out\production\browser-app" />
+
+    <target name="init">
+        <tstamp />
+        <mkdir dir="${build}" />
+    </target>
+
+    <target name="compile" depends="init">
+        <javac srcdir="${src}" destdir="${build}">
+            <classpath>
+                <pathelement location="lib\guava-18.0.jar" />
+                <pathelement location="lib\jgoodies-common-1.7.0.jar" />
+                <pathelement location="lib\jgoodies-forms-1.7.2.jar" />
+                <pathelement location="lib\swt\swt.jar" />
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="dist" depends="compile">
+        <mkdir dir="${dist}" />
+        <jar jarfile="${dist}\browser-app-${DSTAMP}.jar" basedir="${build}">
+            <zipfileset includes="**/*.class" src="lib\jgoodies-common-1.7.0.jar" />
+            <zipfileset includes="**/*.class" src="lib\guava-18.0.jar" />
+            <zipfileset includes="**/*.class" src="lib\jgoodies-forms-1.7.2.jar" />
+            <manifest>
+                <attribute name="Main-Class"
+                           value="in.nerdworks.browserapp.Program"/>
+            </manifest>
+        </jar>
+        <copy file="lib\swt\swt.jar" todir="${dist}" />
+    </target>
+
+    <target name="clean">
+        <delete dir="${build}" />
+        <delete dir="${dist}" />
+    </target>
+
+    <taskdef resource="proguard/ant/task.properties"
+             classpath="lib/proguard-anttask-5.0.jar" />
+    <target name="obfuscate"
+            depends="dist"
+            description="Obfuscate compiled classes">
+        <proguard>
+            -libraryjars "${java.home}\lib\rt.jar"; "lib\jsr305-1.3.9.jar"; "lib\swt\swt.jar"
+            -injars      "${dist}\browser-app-${DSTAMP}.jar"
+            -outjars     "${dist}\browser-app-${DSTAMP}-ob.jar"
+            -dontwarn    com.intellij.uiDesigner.core.*
+            -keep public class in.nerdworks.browserapp.Program {
+            public static void main(java.lang.String[]);
+            }
+        </proguard>
+    </target>
+</project>
