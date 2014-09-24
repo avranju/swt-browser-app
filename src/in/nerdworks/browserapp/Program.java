@@ -12,6 +12,11 @@ import org.eclipse.swt.widgets.Shell;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.concurrent.ExecutionException;
 
 public class Program extends JFrame {
     private JPanel contentPane;
@@ -57,6 +62,21 @@ public class Program extends JFrame {
     }
 
     public static void main(String[] args) {
+        try {
+            SWTLoader swtLoader = new SWTLoader();
+            File jarFile = swtLoader.loadJar();
+            URLClassLoader loader = new URLClassLoader(new URL[] {
+                    new URL("file://" + jarFile.getPath())
+            }, Thread.currentThread().getContextClassLoader());
+            Thread.currentThread().setContextClassLoader(loader);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            System.exit(1);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
         Program dialog = new Program();
         dialog.setPreferredSize(new Dimension(320, 240));
         dialog.pack();
