@@ -7,12 +7,12 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 public class SWTLoader {
-    final String BASE_URL = "https://github.com/avranju/swt-browser-app/blob/master/lib/swt/";
-    private String swtJarUrl;
-    private FileCache filesCache;
-    private final String jarName;
+    private static final String BASE_URL = "https://github.com/avranju/swt-browser-app/blob/master/lib/swt/";
+    private static final String SWT_JAR_NAME = "swt.jar";
+    private static FileCache filesCache;
+    private static String jarName;
 
-    public SWTLoader() throws MalformedURLException {
+    static {
         // swt-4.4-win32-win32-x86/swt.jar?raw=true
         String osName = System.getProperty("os.name").toLowerCase();
         boolean isWindows = osName.contains("win");
@@ -26,12 +26,15 @@ public class SWTLoader {
                                 isLinux ? "gtk-linux-" : "") +
                 (isx64 ? "x86_x64" : "x86") +
                 "/swt.jar?raw=true";
-        filesCache = new FileCache(new FileSource[] {
-           new FileSource("swt.jar", new URL(BASE_URL + jarName))
-        });
     }
 
-    public File loadJar() throws ExecutionException {
-        return filesCache.getFile("swt.jar");
+    public static File loadJar() throws ExecutionException, MalformedURLException {
+        if(filesCache == null) {
+            filesCache = new FileCache(new FileSource[] {
+                    new FileSource(SWT_JAR_NAME, new URL(BASE_URL + jarName))
+            });
+        }
+
+        return filesCache.getFile(SWT_JAR_NAME);
     }
 }

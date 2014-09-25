@@ -1,4 +1,3 @@
 Manifest-Version: 1.0
-Class-Path: jgoodies-common-1.7.0.jar swt.jar guava-18.0.jar jgoodies-
- forms-1.7.2.jar jgoodies-common-1.7.0.jar
+Main-Class: in.nerdworks.browserapp.Program
 
