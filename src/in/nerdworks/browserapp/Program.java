@@ -1,5 +1,7 @@
 package in.nerdworks.browserapp;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import in.nerdworks.browserutils.types.Browser;
 
 import javax.swing.*;
@@ -26,11 +28,14 @@ public class Program extends JFrame {
             IllegalAccessException,
             InstantiationException {
 
-        URLClassLoader loader = new URLClassLoader(new URL[] {
-                new URL("file:/" + SWTLoader.loadJar().getPath()),
-                new URL("file:/F:/code/swt-browser-app/out/artifacts/browser-util.jar")
-        }, Program.class.getClassLoader());
+        File[] files = SWTLoader.loadJars();
+        URL[] urls = new URL[files.length];
+        int index = 0;
+        for(File f : files) {
+            urls[index++] = new URL(f.getPath());
+        }
 
+        URLClassLoader loader = new URLClassLoader(urls, Program.class.getClassLoader());
         for(URL u : loader.getURLs()) {
             System.out.println(u.toString());
         }

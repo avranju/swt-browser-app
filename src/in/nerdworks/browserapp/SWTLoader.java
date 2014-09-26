@@ -8,7 +8,9 @@ import java.util.concurrent.ExecutionException;
 
 public class SWTLoader {
     private static final String BASE_URL = "https://github.com/avranju/swt-browser-app/blob/master/lib/swt/";
+    private static final String BROWSER_UTIL_JAR_URL = "https://github.com/avranju/swt-browser-app/blob/master/out/artifacts/swt_browser_app_jar/browser-util.jar?raw=true";
     private static final String SWT_JAR_NAME = "swt.jar";
+    private static final String BROWSER_UTIL_JAR_NAME = "browser-util.jar";
     private static FileCache filesCache;
     private static String jarName;
 
@@ -28,13 +30,17 @@ public class SWTLoader {
                 "/swt.jar?raw=true";
     }
 
-    public static File loadJar() throws ExecutionException, MalformedURLException {
+    public static File[] loadJars() throws ExecutionException, MalformedURLException {
         if(filesCache == null) {
             filesCache = new FileCache(new FileSource[] {
-                    new FileSource(SWT_JAR_NAME, new URL(BASE_URL + jarName))
+                    new FileSource(SWT_JAR_NAME, new URL(BASE_URL + jarName)),
+                    new FileSource(BROWSER_UTIL_JAR_NAME, new URL(BROWSER_UTIL_JAR_URL))
             });
         }
 
-        return filesCache.getFile(SWT_JAR_NAME);
+        return new File[] {
+                filesCache.getFile(SWT_JAR_NAME),
+                filesCache.getFile(BROWSER_UTIL_JAR_NAME)
+        };
     }
 }
